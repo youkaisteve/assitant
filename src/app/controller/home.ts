@@ -1,5 +1,8 @@
-import { Context, inject, controller, get, provide, post, config } from 'midway';
+import { Context, inject, controller, provide, get, post, config } from 'midway';
 import { IEventService } from '../../interface';
+const fs = require('fs');
+const path = require('path');
+const images = require('images');
 
 @provide()
 @controller('/')
@@ -15,26 +18,39 @@ export class HomeController {
 
     @get('/')
     async index() {
-        this.ctx.session.visited = this.ctx.session.visited ? this.ctx.session.visited + 1 : 1;
-        this.ctx.cookies.set('x-visit-count', this.ctx.session.visited.toString(), {
-            encrypt: true,
-        });
-        const currentCookieVisit = this.ctx.cookies.get('x-visit-count', {
-            encrypt: true,
-        });
-        this.ctx.body = `Welcome to midwayjs! - session[visited]:${this.ctx.session.visited},cookie[x-visit-count]:${currentCookieVisit}`;
+        await this.ctx.render('home/index.nj', { name: '日常助手' });
     }
 
-    @get('/cache')
-    async cache() {
-        await this.ctx.app['cache'].set('x-visit-count', new Date().getTime());
-        this.ctx.helper.foo();
-        this.ctx.body = await this.ctx.app['cache'].get('x-visit-count');
+    @post('/bigscreen/imagesplit')
+    async imagesplit() {
+        let downloadFile;
+        try {
+            for (const file of this.ctx.request.files) {
+                console.log('field: ' + file.field);
+                console.log('filename: ' + file.filename);
+                console.log('encoding: ' + file.encoding);
+                console.log('mime: ' + file.mime);
+                console.log('tmp filepath: ' + file.filepath);
+                downloadFile = file.filepath;
+            }
+
+            const fileName = path.basename(downloadFile);
+            const extension = path.extname(downloadFile);
+            this.ctx.set({
+                'Content-Disposition': `attachment; filename=${encodeURI(fileName.replace(extension, '-s.jpg'))}`,
+            });
+            this.ctx.body = images(downloadFile).size(256);
+        } finally {
+            // 需要删除临时文件
+            await this.ctx.cleanupRequestFiles();
+        }
     }
 
-    @post('/')
-    async add() {
-        await this.eventService.add(this.ctx.request.body);
-        this.ctx.body = 'ok';
+    @get('/bigscreen/download')
+    async download() {
+        this.ctx.set({
+            'Content-Disposition': `attachment; filename=${encodeURI('正式环境数据状态')}.jpg`,
+        });
+        this.ctx.body = fs.createReadStream('/Users/steve.k.you/ibuild/tmp/正式环境数据状态.jpg');
     }
 }

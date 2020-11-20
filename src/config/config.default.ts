@@ -1,6 +1,8 @@
 import * as path from 'path';
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'midway';
 
+const nunjucks = require('nunjucks');
+
 export type DefaultConfig = PowerPartial<EggAppConfig>;
 
 export default (appInfo: EggAppInfo) => {
@@ -28,8 +30,13 @@ export default (appInfo: EggAppInfo) => {
         },
     };
 
+    config.view = {
+        defaultViewEngine: 'nunjucks',
+        defaultExtension: '.nj',
+    };
+
     config.session = {
-        key: 'tutorial',
+        key: 'assitant',
         maxAge: 1000 * 30,
     };
 
@@ -42,17 +49,16 @@ export default (appInfo: EggAppInfo) => {
         dialect: 'mysql',
     };
 
-    config.redis = {
-        client: {
-            host: '127.0.0.1',
-            port: 32771,
-            password: 'redis',
-        },
-    };
-
     config.biz = {
         appName: 'tutorial',
     };
+
+    config.multipart = {
+        mode: 'file',
+    };
+
+    nunjucks.configure('/views');
+    nunjucks.configure({ noCache: true });
 
     return config;
 };
