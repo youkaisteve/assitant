@@ -1,4 +1,5 @@
 import { Context, inject, controller, provide, get, post, config } from 'midway';
+const { Readable } = require('stream');
 const XLSX = require('xlsx');
 
 @provide()
@@ -32,6 +33,9 @@ export class ExcelController {
             }
             strList.push(innerStr);
         }
-        this.ctx.body = strList.join('\n');
+        this.ctx.set({
+            'Content-Disposition': `attachment; filename=${encodeURI('输出结果.txt')}`,
+        });
+        this.ctx.body = Readable.from(strList.join('\n'));
     }
 }
