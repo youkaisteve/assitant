@@ -56,6 +56,7 @@ export default (appInfo: EggAppInfo) => {
 
     config.multipart = {
         mode: 'file',
+        fileExtensions: ['xls'],
     };
 
     nunjucks.configure('/views');

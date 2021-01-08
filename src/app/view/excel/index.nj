@@ -1,0 +1,12 @@
+<h1>Excel相关</h1>
+<h2>通过模板和Excel生成文本<span style="font-size:11px;">(首行为标题，第二行开始为数据)</span></h2>
+<div>
+<form method="post" action="/excel/template" enctype="multipart/form-data">
+<input type="file" name="file"/>
+<input type="text" name="template" style="width:500px;height:50px;"/>
+<input type="submit" value="执行"/>
+</form>
+</div>
+<div>
+<textarea name="output" multiple></textarea>
+<div>
