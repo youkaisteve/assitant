@@ -1,4 +1,9 @@
 <h1>大屏相关</h1>
+<h2>大屏板式截图切割<span style="font-size:11px;">(处理成缩略图和预览图)</span></h2>
 <div>
-<input type="file"/>
+<form method="post" action="/bigscreen/imagesplit" target="targetIfr"  enctype="multipart/form-data">
+<input type="file" multiple name="file"/>
+<input type="submit" value="生成"/>
+</form>
+ <iframe name="targetIfr" style="display:none"></iframe>
 </div>

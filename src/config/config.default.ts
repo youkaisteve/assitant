@@ -51,6 +51,7 @@ export default (appInfo: EggAppInfo) => {
 
     config.biz = {
         appName: 'tutorial',
+        tempPath: '/tmp',
     };
 
     config.multipart = {
